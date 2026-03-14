@@ -1,6 +1,6 @@
 # 🪝 Hooks
 
-Three hooks. Each one owns exactly one concern and doesn't touch the others.
+Two hooks. Each one owns exactly one concern and doesn't touch the others.
 
 ---
 
@@ -89,23 +89,3 @@ function useCarouselInteraction(options: CarouselInteractionOptions): {
 | `MIN_VELOCITY` | `0.05` °/frame | Below this, momentum loop stops |
 | `SNAP_DURATION` | `300` ms | Duration of snap settle animation |
 | `INTRO_SPIN_DEG` | `720` | Degrees to spin on intro |
-
----
-
-## useLiquidGlass
-
-**Source:** `src/hooks/useLiquidGlass.ts`
-
-Lazily injects the SVG liquid-glass displacement filter into the DOM. Tiny hook, does one thing.
-
-### Signature
-
-```ts
-function useLiquidGlass(): void
-```
-
-### How It Works
-
-Called inside a `useEffect` that fires when `isOpen` first becomes `true`. Checks for `document.getElementById('liquid-glass-filter')` — if it's already there, bails out. Otherwise calls `buildLiquidGlassFilter()` from `utils/liquidGlass.ts` and appends the returned `<svg>` to `document.body`.
-
-The SVG is `display: none; position: absolute` so it's invisible but the filter is accessible to CSS via `filter: url(#liquidGlass)`. No cleanup on unmount — the filter is tiny and reused across all subsequent opens without any cost.

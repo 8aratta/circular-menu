@@ -1,6 +1,6 @@
 # @8aratta/circular-menu
 
-A radial circular menu for React with carousel mode, momentum physics, and a liquid glass visual effect.
+A radial circular menu for React with carousel mode and momentum physics.
 
 ## Installation
 

@@ -1,7 +1,7 @@
 {
   "name": "@8aratta/circular-menu",
-  "version": "1.0.0",
-  "description": "A radial circular menu for React with carousel mode, momentum physics, and a liquid glass visual effect.",
+  "version": "1.0.1",
+  "description": "A radial circular menu for React with carousel mode, momentum physics and customizable visuals",
   "type": "module",
   "main": "./dist/circular-menu.cjs.js",
   "module": "./dist/circular-menu.es.js",
@@ -38,7 +38,6 @@
     "circular-menu",
     "radial-menu",
     "carousel",
-    "liquid-glass",
     "navigation"
   ],
   "license": "MIT",

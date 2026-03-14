@@ -12,9 +12,9 @@ docs/
 │   └── examples.md         ← copy-paste recipes for the impatient
 └── technical/
     ├── architecture.md     ← package structure, build pipeline, design decisions
-    ├── CircularMenu.md     ← deep dive into the main component — math, physics, glass
-    ├── hooks.md            ← the three hooks and what they each own
-    ├── utils.md            ← geometry helpers and the liquid glass filter builder
+    ├── CircularMenu.md     ← deep dive into the main component — math, physics, interaction
+    ├── hooks.md            ← the two hooks and what they each own
+    ├── utils.md            ← geometry helpers
     └── styles.md           ← injected defaults, selectors, and CSS custom properties
 ```
 

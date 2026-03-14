@@ -8,7 +8,6 @@ import {
     computeItemScale,
 } from './utils/mathUtils';
 import { useCarouselInteraction } from './hooks/useCarouselInteraction';
-import { useLiquidGlass } from './hooks/useLiquidGlass';
 import MenuItem from './components/MenuItem';
 import { useMenuState } from './hooks/useMenuState';
 import { injectStructuralStyles } from './utils/injectStyles';
@@ -55,7 +54,6 @@ function CircularMenu({
 
     // ── Refs ──────────────────────────────────────────────────────────────────
     const menuRef = useRef<HTMLDivElement>(null);
-    const svgDefsRef = useRef<SVGDefsElement>(null);
     const rawPositionsRef = useRef<number[]>([]);
 
     // ── Angle resolution ─────────────────────────────────────────────────────
@@ -93,7 +91,6 @@ function CircularMenu({
         hasDraggedRef,
     });
 
-    useLiquidGlass(isOpen, svgDefsRef);
     useEffect(() => { injectStructuralStyles(); }, []);
 
     // ── Position computation ─────────────────────────────────────────────────
@@ -132,17 +129,6 @@ function CircularMenu({
             data-open={isOpen ? 'true' : 'false'}
             style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
-            {/* Hidden SVG that holds the displacement filter */}
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="0"
-                height="0"
-                style={{ position: 'absolute', overflow: 'hidden' }}
-                colorInterpolationFilters="sRGB"
-            >
-                <defs ref={svgDefsRef} />
-            </svg>
-
             {/* Zero-size anchor at the center of the button */}
             <div
                 ref={menuRef}

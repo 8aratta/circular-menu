@@ -156,33 +156,6 @@ The `!important` is needed because the injected hover rule also has it. Your rul
 }
 ```
 
-### Liquid glass — add it back
-
-The glass effect was removed from the defaults so you can do it yourself if you want it. Hook up an SVG filter and the `::before` pseudo-element:
-
-```css
-/* 1. Inject the SVG filter somewhere in your app */
-/*    (body, a hidden div, wherever — just once) */
-
-/* 2. Apply it to the pills */
-.circular-menu-item {
-  filter: url(#myGlassFilter);
-  background: transparent;
-  overflow: hidden;
-}
-
-.circular-menu-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  backdrop-filter: blur(12px) saturate(1.4);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
-  background: rgba(255, 255, 255, 0.08);
-  pointer-events: none;
-}
-```
-
 ### Change font
 
 ```css

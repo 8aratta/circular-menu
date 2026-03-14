@@ -1,4 +1,4 @@
-/* ─── Menu Items (Liquid Glass) ─── */
+/* ─── Menu Items ─── */
 .menuItem {
     position: absolute;
     /* Items base from exact center of the 0×0 container */
@@ -37,21 +37,7 @@
     transition-delay: var(--close-delay, 0ms);
 }
 
-/* Liquid glass refraction layer (behind text) */
-.menuItem::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    border-radius: inherit;
-    backdrop-filter: url(#liquid-glass-pill);
-    -webkit-backdrop-filter: url(#liquid-glass-pill);
-    isolation: isolate;
-    pointer-events: none;
-    user-select: none;
-}
-
-/* Inner shadow + tint overlay */
+/* Background tint overlay */
 .menuItem::before {
     content: '';
     position: absolute;
@@ -93,7 +79,7 @@
     transition-delay: 0ms;
 }
 
-/* Dark mode: brighten the glass tint on hover */
+/* Dark mode: brighten tint on hover */
 .menuItem.open:hover::before {
     background-color: rgba(255, 255, 255, 0.18);
     box-shadow:
@@ -103,7 +89,7 @@
     transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Light mode: darken the glass tint on hover */
+/* Light mode: darken tint on hover */
 [data-theme="light"] .menuItem.open:hover::before {
     background-color: rgba(0, 0, 0, 0.08);
     box-shadow:

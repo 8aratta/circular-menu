@@ -182,5 +182,5 @@ Everything exposed for consumer CSS. See [user/styling.md](../user/styling.md) f
 
 ## What Was Removed
 
-The old package had four CSS Module files that applied liquid-glass effects (`backdrop-filter`, `filter: url(#liquidGlass)`, `::before`/`::after` glass layers, rgba backgrounds). All of that is gone. The SVG filter (`useLiquidGlass`) is also removed. You get clean, unstyled pills — add your own backgrounds, borders, and effects however you like.
+The old package had CSS Module files with default visual styles (backgrounds, rgba tints, `::before`/`::after` layers). All of that is gone. You get clean, unstyled pills — add your own backgrounds, borders, and effects however you like.
 
