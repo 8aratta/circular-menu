@@ -12,11 +12,7 @@ React 17 or later. That's it. No router required, no extra CSS libraries, no mag
 npm install @8aratta/circular-menu
 ```
 
-Then import the stylesheet once — somewhere near the top of your app, like `main.tsx` or `index.tsx`:
-
-```ts
-import '@8aratta/circular-menu/dist/style.css';
-```
+No stylesheet import needed. The component automatically injects its own structural defaults the first time it mounts — pill shape, button sizing, hover states, keyframes, the lot. Just import the component and go.
 
 `react-router-dom` is **not** required — the component is router-agnostic. See [usage.md](usage.md) for the full story on that.
 ---
@@ -129,8 +125,9 @@ function Nav() {
 
 ## What's Next
 
-- [usage.md](usage.md) \u2014 carousel mode, emphasis, snap, theming, every single prop
-- [examples.md](examples.md) \u2014 ready-to-paste snippets for common setups
+- [usage.md](usage.md) — carousel mode, emphasis, snap, theming, every single prop
+- [styling.md](styling.md) — how to style the pills, button, and overlay your way
+- [examples.md](examples.md) — ready-to-paste snippets for common setups
 ---
 
 ## Quick start

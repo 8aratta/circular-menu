@@ -12,8 +12,8 @@ The root component and orchestrator. About 130 lines of JSX + hook calls. It doe
 - Computes per-item arc positions using `mathUtils` based on the arc / carousel configuration
 - Delegates open/close state and scroll-lock to `useMenuState`
 - In carousel mode, delegates rotation, drag/wheel, momentum and snap to `useCarouselInteraction`
-- Lazily injects the SVG liquid-glass filter on first open via `useLiquidGlass`
-- Renders a `.menuWrapper` (positioning anchor) containing the toggle `<button>` and one `<MenuItem>` per link
+- Injects structural CSS defaults into `<head>` on first mount via `injectStructuralStyles()`
+- Renders a `[data-circular-menu]` root div containing the toggle `<button>` and one `<MenuItem>` per link
 
 ---
 
@@ -79,15 +79,15 @@ All items distribute around the full 360° ring. User spins the ring by dragging
 
 ## Interaction States
 
-| State | Trigger | CSS |
-|-------|---------|-----|
-| Closed | Initial or toggle-press while open | Items hidden |
-| Opening | Toggle-press | Fan out with stagger |
-| Open idle | After open animation | Visible; idle-hint fires after 4 s |
-| Dragging | Pointer down + move | Transitions disabled; items follow instantly |
-| Momentum | Pointer release with velocity | Exponential decay loop |
-| Snapping | End of interaction | Nearest item glides to emphasis angle |
-| Closing | Toggle-press while open | Reverse stagger, scroll lock released |
+| State | Trigger | Class on `.circular-menu-item` |
+|-------|---------|--------------------------------|
+| Closed | Initial or toggle-press while open | (no `--open`) |
+| Opening | Toggle-press | `--open` added |
+| Open idle | After open animation | `--open`; idle-hint fires after 4 s |
+| Dragging | Pointer down + move | `--open --interacting` |
+| Momentum | Pointer release with velocity | `--open --interacting` |
+| Snapping | End of interaction | `--open --snapping` |
+| Closing | Toggle-press while open | `--open` removed with reverse stagger |
 
 ---
 
@@ -95,15 +95,13 @@ All items distribute around the full 360° ring. User spins the ring by dragging
 
 The component resists accidental browser interactions on mobile.
 
-### CSS layer
+### Inline styles
 
 | Property | Purpose |
-|----------|---------|
-| `touch-action: none` | Prevents browser scroll/zoom from interfering with drag |
-| `user-select: none` | No text selection during drag |
-| `-webkit-user-drag: none` | No ghost image on Safari drag |
-| `-webkit-touch-callout: none` | No iOS long-press context menu |
-| `-webkit-tap-highlight-color: transparent` | No tap flash on mobile Chrome/Safari |
+|----------|--------|
+| `touchAction: 'none'` on overlay | Prevents browser scroll/zoom from interfering with drag |
+| `userSelect: 'none'` on items | No text selection during drag |
+| `WebkitTapHighlightColor: 'transparent'` on items | No tap flash on mobile Chrome/Safari |
 
 ### JS layer
 
@@ -114,31 +112,16 @@ The component resists accidental browser interactions on mobile.
 | `e.preventDefault()` on move | Suppresses pull-to-refresh and page scroll mid-drag |
 | `draggable={false}` + `onDragStart` suppression | Belt-and-suspenders against native HTML drag |
 
----
-
-## The Liquid Glass Effect
-
-Each menu pill gets an SVG displacement filter applied — it's what gives them that refracted, frosted-glass look. Here's the pipeline:
-
-1. On first open, `useLiquidGlass` checks if the filter SVG already exists in the DOM
-2. If not, calls `buildLiquidGlassFilter()` from `utils/liquidGlass.ts`
-3. Appends `<svg id="liquid-glass-filter" style="display:none; position:absolute">` to `document.body`
-4. The SVG contains `<filter id="liquidGlass">` with: `feTurbulence → feDisplacementMap → feGaussianBlur → feColorMatrix → feComponentTransfer → feComposite`
-5. Each `.menuItem` references it via `filter: url(#liquidGlass)`
-
-Built once, reused forever. No cleanup needed.
-
----
 
 ## Animation
 
 ### Open / Close
 
-Items animate via CSS transitions on `opacity` and `transform`. Each item gets a `transition-delay` of `index × staggerMs`. Close uses a slightly shorter stagger so folding feels snappier than opening.
+Items animate via inline `transition` on `opacity` and `transform`. Each item gets a `transitionDelay` of `index × staggerMs`. Close uses a slightly shorter stagger so folding feels snappier than opening. During drag, all transitions are set to `'none'` so items follow the pointer instantly. After a drag, `--snapping` is set and a smooth 0.4s spring ease kicks in.
 
 ### Idle Hint
 
-After 4 seconds of open and stationary, a subtle `idleTwitch` keyframe plays on the ring to invite dragging. Defined in `animations.module.css`.
+After 4 seconds of open and stationary, the `circular-menu-idle-twitch` keyframe plays on the nearest-to-emphasis item. The animation name is defined in the auto-injected stylesheet (see `injectStructuralStyles`). Defined as the `animation` property in the inline style of `MenuItem` when `showIdleHint` is true.
 
 ---
 

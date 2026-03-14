@@ -1,135 +1,186 @@
 # 🎨 Styles
 
-Four CSS Module files. Vite bundles them down to one `dist/circular-menu.css` at build time — no runtime style injection, no CSS-in-JS, just a plain stylesheet that you import once.
-
-```ts
-import '@8aratta/circular-menu/dist/circular-menu.css';
-```
+No CSS file. No stylesheet import. The component ships zero CSS at build time and takes care of its own structural defaults automatically.
 
 ---
 
-## base.module.css
+## How It Works
 
-Positioning for the wrapper and the circular container.
+`CircularMenu` calls `injectStructuralStyles()` in a one-time `useEffect` on first mount. That function writes a single `<style data-circular-menu-styles>` tag into `<head>`. It's idempotent — if the tag already exists (e.g. SSR hydration, HMR re-mount) it's a no-op.
 
-### Classes
+**Source:** `src/utils/injectStyles.ts`
 
-| Class | Element | Description |
-|-------|---------|-------------|
-| `.menuWrapper` | `<div>` | `position: relative; display: inline-flex` — the positioning anchor |
-| `.circularMenu` | `<div>` | `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)` — centred over the wrapper |
-| `.circularMenuOpen` | Same | Applied while `isOpen` is true; triggers item fan-out |
+---
 
-### Touch guards on `.circularMenu`
+## What Gets Injected
+
+The injected stylesheet covers structural defaults that can't live as inline styles — anything that uses pseudo-selectors, `@keyframes`, `:hover`, or media queries.
+
+### Pill defaults
 
 ```css
-touch-action: none;
-user-select: none;
--webkit-user-drag: none;
-```
-
----
-
-## button.module.css
-
-The hamburger/close toggle button.
-
-### Classes
-
-| Class | Element | Description |
-|-------|---------|-------------|
-| `.menuButton` | `<button>` | Circular button, flex container |
-| `.menuButtonOpen` | Same | Applied when open — can alter background |
-| `.menuIcon` | `<span>` | Flex wrapper around the `openIcon` / `closeIcon` ReactNode |
-
-### Theme variants
-
-```css
-[data-theme='light'] .menuButton { background: rgba(255, 255, 255, 0.7); }
-[data-theme='dark']  .menuButton { background: rgba(30, 30, 30, 0.7);   }
-```
-
-`data-theme` is set on `.menuWrapper` by the component. Everything inside can key off it.
-
----
-
-## menuItem.module.css
-
-The most interesting file. Styles the individual nav pills — glass layers, positioning, states, and theming.
-
-### Classes
-
-| Class | Element | Description |
-|-------|---------|-------------|
-| `.menuItem` | `<li>` | Positioned absolute; applies `filter: url(#liquidGlass)` |
-| `.menuItemOpen` | Same | Fades and scales in — `opacity: 1; transform: scale(1)` |
-| `.menuLink` | `renderLink` wrapper | `display: flex; flex-direction: column; align-items: center` |
-| `.iconContainer` | `<div>` | Circular icon wrapper; size from CSS custom prop |
-| `.iconWrapper` | `<span>` | Inner flex wrapper for the icon ReactNode |
-| `.label` | `<span>` | The text label |
-
-### CSS Custom Properties
-
-Set inline on each item by `MenuItem`:
-
-| Property | What it does |
-|----------|--------------|
-| `--item-x` | Cartesian x offset from the menu centre (px) |
-| `--item-y` | Cartesian y offset from the menu centre (px) |
-| `--item-scale` | Scale factor from emphasis calculation |
-| `--stagger-delay` | `index × staggerMs` — staggers the open/close animation |
-
-### Pseudo-elements
-
-| Selector | Purpose |
-|----------|---------|
-| `.menuItem::before` | The frosted glass background layer |
-| `.menuItem::after` | Subtle highlight ring for the glass edge |
-| `.iconContainer::before` | Inner glow on the icon circle |
-| `::before` and `::after` both | `pointer-events: none` — glass layers never eat clicks |
-
-### Interaction states
-
-| State | CSS class | Transition behaviour |
-|-------|-----------|---------------------|
-| Open (default) | `.menuItemOpen` | Normal spring with stagger delay |
-| Dragging | `.menuItemOpen.interacting` | All transitions **disabled** — items follow pointer instantly |
-| Snapping | `.menuItemOpen.snapping` | Smooth 0.4s spring ease — the satisfying settle |
-
-This three-state split is what makes the carousel feel right. No transition lag while dragging; buttery snap on release.
-
-### Theme variants
-
-```css
-[data-theme='light'] .menuItem::before { /* light glass */ }
-[data-theme='dark']  .menuItem::before { /* dark glass */  }
-```
-
-### Z-index layers
-
-| Layer | z-index | Notes |
-|-------|---------|-------|
-| `.menuItem` | `1` | Above the wrapper |
-| `.menuItem` hovered | `10` | Rises above siblings |
-| Toggle button | `20` | Always on top |
-
----
-
-## animations.module.css
-
-Just one animation. But it's a good one.
-
-### `idleTwitch`
-
-A subtle wobble that plays on the ring after 4 s of inactivity:
-@keyframes idleTwitch {
-  0%   { transform: translate(-50%, -50%) rotate(0deg);   }
-  15%  { transform: translate(-50%, -50%) rotate(3deg);   }
-  30%  { transform: translate(-50%, -50%) rotate(-2deg);  }
-  45%  { transform: translate(-50%, -50%) rotate(1.5deg); }
-  60%  { transform: translate(-50%, -50%) rotate(-1deg);  }
-  100% { transform: translate(-50%, -50%) rotate(0deg);   }
+.circular-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #fff;
+  white-space: nowrap;
+  cursor: pointer;
 }
 ```
 
-Duration: 0.8 s, `ease-in-out`, plays once. The message: *hey, you can spin this thing.*
+### Light theme text
+
+```css
+[data-theme="light"] .circular-menu-item {
+  color: #000;
+}
+```
+
+### Hover scale nudge
+
+```css
+.circular-menu-item--open:hover {
+  transform: translate(var(--tx), var(--ty)) scale(calc(var(--scale-factor, 1) * 1.08)) !important;
+}
+```
+
+The `!important` is intentional — inline `transform` from JS would otherwise win the specificity battle.
+
+### Toggle button sizing
+
+```css
+[data-circular-menu-toggle] {
+  width: 44px;
+  height: 44px;
+}
+
+[data-circular-menu-toggle] > div {
+  width: 40px;
+  height: 40px;
+}
+```
+
+### Icon fill rules
+
+```css
+[data-circular-menu-icon] {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+```
+
+### Overlay touch-action (carousel mode)
+
+```css
+[data-circular-menu-overlay][data-carousel] {
+  touch-action: none;
+}
+
+[data-circular-menu-overlay]:active {
+  cursor: grabbing;
+}
+```
+
+### Idle-hint keyframe
+
+```css
+@keyframes circular-menu-idle-twitch {
+  0%   { transform: translate(var(--tx), var(--ty)) scale(var(--scale-factor, 1)); }
+  20%  { transform: translate(var(--tx), var(--ty)) scale(var(--scale-factor, 1)) rotate(6deg); }
+  40%  { transform: translate(var(--tx), var(--ty)) scale(var(--scale-factor, 1)) rotate(-4deg); }
+  60%  { transform: translate(var(--tx), var(--ty)) scale(var(--scale-factor, 1)) rotate(2deg); }
+  80%  { transform: translate(var(--tx), var(--ty)) scale(var(--scale-factor, 1)) rotate(-1deg); }
+  100% { transform: translate(var(--tx), var(--ty)) scale(var(--scale-factor, 1)); }
+}
+```
+
+### Media queries
+
+```css
+@media (max-width: 768px) {
+  .circular-menu-item { padding: 0.5rem 1rem; font-size: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+  .circular-menu-item { padding: 0.45rem 0.85rem; font-size: 0.8rem; }
+}
+```
+
+---
+
+## What Stays Inline
+
+Anything that needs to update per-frame or per-item lives as inline styles on the React elements — not in the injected sheet. These are **not** yours to override; JS owns them.
+
+| Property | Set on | Updated by |
+|----------|--------|-----------|
+| `transform` | `.circular-menu-item` | JS (carousel rotation, open/close) |
+| `opacity` | `.circular-menu-item` | JS (open/close fade) |
+| `transition` / `transitionDelay` | `.circular-menu-item` | JS (disabled during drag, active on snap) |
+| `animation` | `.circular-menu-item` | JS (idle-twitch toggle) |
+| `opacity` on icon spans | `[data-circular-menu-icon]` | JS (open/close crossfade) |
+| `transform` on icon spans | `[data-circular-menu-icon]` | JS (spring crossfade) |
+| `opacity` + `pointerEvents` on overlay | `[data-circular-menu-overlay]` | JS (show/hide) |
+
+---
+
+## CSS Custom Properties
+
+These are set inline on each `.circular-menu-item` by `MenuItem.tsx`. They're the bridge between JS-computed positions and your CSS overrides.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `--tx` | `px` string | Horizontal translation from centre |
+| `--ty` | `px` string | Vertical translation from centre |
+| `--scale-factor` | number | Current emphasis scale multiplier |
+| `--open-delay` | `ms` string | Stagger delay for the open animation |
+| `--close-delay` | `ms` string | Stagger delay for the close animation |
+
+The hover rule uses `--tx`, `--ty`, and `--scale-factor` so the extra scale nudge composes cleanly with the JS-computed values.
+
+---
+
+## Selector Reference
+
+Everything exposed for consumer CSS. See [user/styling.md](../user/styling.md) for usage examples.
+
+### Attribute selectors
+
+| Selector | What it targets |
+|----------|----------------|
+| `[data-circular-menu]` | Root wrapper div |
+| `[data-circular-menu][data-theme="dark"]` | Root in dark mode |
+| `[data-circular-menu][data-theme="light"]` | Root in light mode |
+| `[data-circular-menu][data-open="true"]` | Root when menu is open |
+| `[data-circular-menu][data-open="false"]` | Root when menu is closed |
+| `[data-circular-menu-toggle]` | The open/close button |
+| `[data-circular-menu-icon="open"]` | Icon span shown when closed |
+| `[data-circular-menu-icon="close"]` | Icon span shown when open |
+| `[data-circular-menu-overlay]` | The backdrop overlay |
+
+### BEM classes (on each pill)
+
+| Class | When present |
+|-------|-------------|
+| `.circular-menu-item` | Always (base styles) |
+| `.circular-menu-item--open` | Menu is open |
+| `.circular-menu-item--interacting` | User is dragging |
+| `.circular-menu-item--snapping` | Post-drag snap animation |
+| `.circular-menu-item--emphasized` | Item is at the emphasis angle |
+| `.circular-menu-item--idle-hint` | Idle-hint animation is playing |
+
+---
+
+## What Was Removed
+
+The old package had four CSS Module files that applied liquid-glass effects (`backdrop-filter`, `filter: url(#liquidGlass)`, `::before`/`::after` glass layers, rgba backgrounds). All of that is gone. The SVG filter (`useLiquidGlass`) is also removed. You get clean, unstyled pills — add your own backgrounds, borders, and effects however you like.
+

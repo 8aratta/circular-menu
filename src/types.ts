@@ -14,6 +14,11 @@ export interface LinkRenderProps {
     className: string;
     style: React.CSSProperties;
     draggable: false;
+    'data-open': 'true' | 'false';
+    'data-interacting'?: 'true';
+    'data-snapping'?: 'true';
+    'data-emphasized'?: 'true';
+    'data-idle-hint'?: 'true';
     onClick: (e: React.MouseEvent) => void;
     onDragStart: (e: React.DragEvent) => void;
     onPointerDown?: (e: React.PointerEvent<HTMLElement>) => void;

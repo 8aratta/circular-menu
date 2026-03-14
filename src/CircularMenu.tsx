@@ -10,9 +10,8 @@ import {
 import { useCarouselInteraction } from './hooks/useCarouselInteraction';
 import { useLiquidGlass } from './hooks/useLiquidGlass';
 import MenuItem from './components/MenuItem';
-import baseStyles from './styles/base.module.css';
-import buttonStyles from './styles/button.module.css';
 import { useMenuState } from './hooks/useMenuState';
+import { injectStructuralStyles } from './utils/injectStyles';
 
 /** Aspect ratio used for elliptical angle warping (wider pills → stretch top/bottom) */
 const ITEM_ASPECT_RATIO = 1.35;
@@ -95,6 +94,7 @@ function CircularMenu({
     });
 
     useLiquidGlass(isOpen, svgDefsRef);
+    useEffect(() => { injectStructuralStyles(); }, []);
 
     // ── Position computation ─────────────────────────────────────────────────
     const baseAngles = useMemo(
@@ -126,7 +126,12 @@ function CircularMenu({
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <div className={baseStyles.menuWrapper} data-theme={resolvedTheme}>
+        <div
+            data-circular-menu
+            data-theme={resolvedTheme}
+            data-open={isOpen ? 'true' : 'false'}
+            style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+        >
             {/* Hidden SVG that holds the displacement filter */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +144,10 @@ function CircularMenu({
             </svg>
 
             {/* Zero-size anchor at the center of the button */}
-            <div className={baseStyles.circularMenu} ref={menuRef}>
+            <div
+                ref={menuRef}
+                style={{ position: 'absolute', top: '50%', left: '50%', zIndex: 110, width: 0, height: 0, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
                 {links.map((link, i) => {
                     const pos = rotatedPositions[i] ?? { x: 0, y: 0, visualAngle: 0 };
                     const scale = computeItemScale(
@@ -179,21 +187,45 @@ function CircularMenu({
 
             {/* Hamburger / X toggle button */}
             <button
-                className={buttonStyles.menuButton}
+                data-circular-menu-toggle
                 onClick={toggleMenu}
                 aria-label={isOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isOpen}
+                style={{
+                    position: 'relative',
+                    zIndex: 120,
+                    cursor: 'pointer',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
             >
-                <div className={buttonStyles.iconWrapper}>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span
-                        className={`${buttonStyles.menuIcon} ${isOpen ? buttonStyles.hidden : buttonStyles.visible}`}
+                        data-circular-menu-icon="open"
                         aria-hidden="true"
+                        style={{
+                            display: 'flex',
+                            opacity: isOpen ? 0 : 1,
+                            transform: isOpen ? 'scale(0.7) rotate(15deg)' : 'scale(1) rotate(0deg)',
+                            transition: 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        }}
                     >
                         {openIcon}
                     </span>
                     <span
-                        className={`${buttonStyles.menuIcon} ${isOpen ? buttonStyles.visible : buttonStyles.hidden}`}
+                        data-circular-menu-icon="close"
                         aria-hidden="true"
+                        style={{
+                            position: 'absolute',
+                            display: 'flex',
+                            opacity: isOpen ? 1 : 0,
+                            transform: isOpen ? 'scale(1) rotate(0deg)' : 'scale(0.7) rotate(-15deg)',
+                            transition: 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        }}
                     >
                         {closeIcon}
                     </span>
@@ -202,13 +234,8 @@ function CircularMenu({
 
             {/* Full-screen overlay — catches outside clicks and carousel drag */}
             <div
-                className={[
-                    baseStyles.menuOverlay,
-                    isOpen ? baseStyles.visible : '',
-                    carousel ? baseStyles.carouselOverlay : '',
-                ]
-                    .filter(Boolean)
-                    .join(' ')}
+                data-circular-menu-overlay
+                {...(carousel ? { 'data-carousel': '' } : {})}
                 onClick={closeMenu}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
@@ -216,6 +243,15 @@ function CircularMenu({
                 onPointerCancel={handlePointerUp}
                 onWheel={handleWheel}
                 aria-hidden="true"
+                style={{
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 105,
+                    opacity: isOpen ? 1 : 0,
+                    pointerEvents: isOpen ? 'auto' : 'none',
+                    cursor: carousel ? 'grab' : undefined,
+                    transition: 'opacity 0.3s ease',
+                }}
             />
         </div>
     );

@@ -8,12 +8,6 @@ A radial circular menu for React with carousel mode, momentum physics, and a liq
 npm install @8aratta/circular-menu
 ```
 
-Import the stylesheet once in your app entry point:
-
-```ts
-import '@8aratta/circular-menu/dist/style.css';
-```
-
 ### Peer dependencies
 
 ```bash

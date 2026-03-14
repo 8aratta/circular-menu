@@ -29,8 +29,13 @@ Skip any of these and things will visually break or feel off.
 ```ts
 interface LinkRenderProps {
   ref: React.Ref<HTMLAnchorElement>;
-  className: string;
+  className: string;                 // 'circular-menu-item' + state modifiers
   style: React.CSSProperties;        // --tx, --ty, --scale-factor, --open-delay, --close-delay
+  'data-open': 'true' | 'false';     // current open state
+  'data-interacting'?: 'true';       // present while dragging
+  'data-snapping'?: 'true';          // present during snap animation
+  'data-emphasized'?: 'true';        // present when item is at the emphasis angle
+  'data-idle-hint'?: 'true';         // present during the idle-hint animation
   draggable: false;
   onClick: (e: React.MouseEvent) => void;
   onDragStart: (e: React.DragEvent) => void;
@@ -52,7 +57,14 @@ interface LinkRenderProps {
 <CircularMenu theme="light" ... />
 ```
 
-This sets a `data-theme` attribute on the component's root element, which the bundled CSS uses to switch between dark and light pill styles. If you need deeper theme customisation, the CSS custom properties `--tx`, `--ty`, and `--scale-factor` are on each item, and you can override the `::before` / `::after` pseudo-element styles from your own stylesheet by layering on `[data-theme] .someClass`.
+This sets a `data-theme` attribute on the root `[data-circular-menu]` element. Target it from your own stylesheet to apply theme-specific overrides:
+
+```css
+[data-circular-menu][data-theme="dark"]  .circular-menu-item { background: rgba(30,30,30,0.8); }
+[data-circular-menu][data-theme="light"] .circular-menu-item { background: rgba(255,255,255,0.8); }
+```
+
+For overriding pill look, button size, hover effects, and more — see [styling.md](styling.md).
 
 ---
 

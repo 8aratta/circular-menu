@@ -11,14 +11,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/circular-menu.es.js",
       "require": "./dist/circular-menu.cjs.js"
-    },
-    "./dist/circular-menu.css": "./dist/circular-menu.css"
+    }
   },
   "files": [
     "dist"
-  ],
-  "sideEffects": [
-    "*.css"
   ],
   "scripts": {
     "build": "vite build",
