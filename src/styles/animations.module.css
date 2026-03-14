@@ -1,0 +1,63 @@
+/* ────────────────────────────────────────────────────────────────────────────
+   CircularMenu — Motion & Animation
+   Keep all @keyframes and animation-specific classes here so they can be
+   swapped out or extended independently of layout and theme styles.
+──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Idle hint ──────────────────────────────────────────────────────────────
+   Applied to the currently-emphasized item after a period of inactivity.
+   Long rest followed by a brief jiggle to say "you can spin me".
+   Uses the CSS Individual Transforms (rotate, scale) so they compose
+   cleanly on top of the existing transform: translate…scale() in
+   menuItem.module.css without conflict.
+─────────────────────────────────────────────────────────────────────────── */
+@keyframes idleTwitch {
+
+    /* ── long rest (6 s out of 8) ── */
+    0%,
+    75% {
+        rotate: 0deg;
+        scale: 1;
+    }
+
+    /* ── brief jiggle (1.6 s) ── */
+    79% {
+        rotate: -14deg;
+        scale: 1.07;
+    }
+
+    /* nudge: left */
+    84% {
+        rotate: 9deg;
+        scale: 0.96;
+    }
+
+    /* spring: right */
+    88% {
+        rotate: -5deg;
+        scale: 1.03;
+    }
+
+    /* dampen */
+    91% {
+        rotate: 2deg;
+        scale: 0.99;
+    }
+
+    94% {
+        rotate: 0deg;
+        scale: 1;
+    }
+
+    /* settle */
+    100% {
+        rotate: 0deg;
+        scale: 1;
+    }
+}
+
+.idleTwitch {
+    animation: idleTwitch 8s ease-in-out infinite;
+    /* Slight pause before first twitch so the intro spin can land first */
+    animation-delay: 1s;
+}

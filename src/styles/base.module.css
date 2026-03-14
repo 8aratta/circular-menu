@@ -1,0 +1,46 @@
+/* ─── Overlay ─── */
+.menuOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 105;
+    background: transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.menuOverlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.carouselOverlay {
+    touch-action: none;
+    cursor: grab;
+}
+
+.carouselOverlay:active {
+    cursor: grabbing;
+}
+
+/* ─── Menu Wrapper ─── */
+.menuWrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ─── Circular Menu Container ─── */
+.circularMenu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 110;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

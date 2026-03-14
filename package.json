@@ -1,0 +1,52 @@
+{
+  "name": "@8aratta/circular-menu",
+  "version": "1.0.0",
+  "description": "A radial circular menu for React with carousel mode, momentum physics, and a liquid glass visual effect.",
+  "type": "module",
+  "main": "./dist/circular-menu.cjs.js",
+  "module": "./dist/circular-menu.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/circular-menu.es.js",
+      "require": "./dist/circular-menu.cjs.js"
+    },
+    "./dist/circular-menu.css": "./dist/circular-menu.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run type-check && npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.0.0"
+  },
+  "keywords": [
+    "react",
+    "circular-menu",
+    "radial-menu",
+    "carousel",
+    "liquid-glass",
+    "navigation"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

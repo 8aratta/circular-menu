@@ -1,0 +1,140 @@
+/* ─── Menu Items (Liquid Glass) ─── */
+.menuItem {
+    position: absolute;
+    /* Items base from exact center of the 0×0 container */
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    padding: 0.55rem 1.2rem;
+    border-radius: 50px;
+    pointer-events: none;
+    isolation: isolate;
+    transform-origin: center center;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+
+    /* Animation defaults — explicit 0px closed translation */
+    --tx: 0px;
+    --ty: 0px;
+    opacity: 0;
+    transform: translate(calc(0px - 50%), calc(0px - 50%)) scale(0.3);
+    transition:
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.3s ease;
+
+    /* Close stagger — driven by JS custom property */
+    transition-delay: var(--close-delay, 0ms);
+}
+
+/* Liquid glass refraction layer (behind text) */
+.menuItem::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: inherit;
+    backdrop-filter: url(#liquid-glass-pill);
+    -webkit-backdrop-filter: url(#liquid-glass-pill);
+    isolation: isolate;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Inner shadow + tint overlay */
+.menuItem::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 20px -5px rgba(255, 255, 255, 0.45);
+    pointer-events: none;
+    user-select: none;
+}
+
+[data-theme="light"] .menuItem {
+    color: #000;
+}
+
+[data-theme="light"] .menuItem::before {
+    background-color: rgba(255, 255, 255, 0.45);
+    box-shadow:
+        inset 0 0 20px -5px rgba(255, 255, 255, 0.85),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ─── Open state ─── */
+.menuItem.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(calc(var(--tx) - 50%), calc(var(--ty) - 50%)) scale(var(--scale-factor, 1));
+    transition-delay: var(--open-delay, 0ms);
+}
+
+/* ─── Hover ─── */
+.menuItem.open:hover {
+    /* Nudge the scale factor up by 8% on top of whatever emphasis scale is active */
+    transform: translate(calc(var(--tx) - 50%), calc(var(--ty) - 50%)) scale(calc(var(--scale-factor, 1) * 1.08));
+    transition:
+        transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.15s ease;
+    transition-delay: 0ms;
+}
+
+/* Dark mode: brighten the glass tint on hover */
+.menuItem.open:hover::before {
+    background-color: rgba(255, 255, 255, 0.18);
+    box-shadow:
+        inset 0 0 24px -4px rgba(255, 255, 255, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        0 0 16px -4px rgba(255, 255, 255, 0.25);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Light mode: darken the glass tint on hover */
+[data-theme="light"] .menuItem.open:hover::before {
+    background-color: rgba(0, 0, 0, 0.08);
+    box-shadow:
+        inset 0 0 20px -5px rgba(255, 255, 255, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 2px 12px -2px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* ─── Dragging State (Fast Track) ─── */
+.menuItem.open.interacting {
+    transition: none !important;
+}
+
+/* ─── Snapping State (Smooth Catch) ─── */
+.menuItem.open.snapping {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    transition-delay: 0s !important;
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 768px) {
+    .menuItem {
+        font-size: 0.82rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .menuItem {
+        font-size: 0.75rem;
+        padding: 0.45rem 0.9rem;
+    }
+}
