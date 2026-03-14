@@ -1,0 +1,156 @@
+/* ============================================================
+   circular-menu – core styles
+   ============================================================ */
+
+:root {
+  --circular-menu-radius: 100px;
+  --circular-menu-trigger-size: 56px;
+  --circular-menu-item-size: 48px;
+  --circular-menu-trigger-bg: #0969da;
+  --circular-menu-trigger-color: #ffffff;
+  --circular-menu-item-bg: #ffffff;
+  --circular-menu-item-color: #24292f;
+  --circular-menu-item-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  --circular-menu-transition-duration: 250ms;
+  --circular-menu-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Root container -------------------------------------------- */
+.circular-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--circular-menu-trigger-size);
+  height: var(--circular-menu-trigger-size);
+}
+
+/* Trigger button -------------------------------------------- */
+.circular-menu__trigger {
+  position: relative;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--circular-menu-trigger-size);
+  height: var(--circular-menu-trigger-size);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--circular-menu-trigger-bg);
+  color: var(--circular-menu-trigger-color);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  transition: transform var(--circular-menu-transition-duration)
+      var(--circular-menu-transition-easing),
+    background-color var(--circular-menu-transition-duration)
+      var(--circular-menu-transition-easing);
+  outline-offset: 3px;
+}
+
+.circular-menu__trigger:hover {
+  filter: brightness(1.1);
+}
+
+.circular-menu__trigger:focus-visible {
+  outline: 2px solid var(--circular-menu-trigger-bg);
+  outline-offset: 3px;
+}
+
+.circular-menu--open .circular-menu__trigger {
+  transform: rotate(45deg);
+}
+
+.circular-menu__trigger-icon {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Item list ------------------------------------------------- */
+.circular-menu__list {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.circular-menu__list-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0) scale(0);
+  opacity: 0;
+  transition: transform var(--circular-menu-transition-duration)
+      var(--circular-menu-transition-easing),
+    opacity var(--circular-menu-transition-duration)
+      var(--circular-menu-transition-easing);
+  pointer-events: none;
+}
+
+.circular-menu--open .circular-menu__list-item {
+  pointer-events: auto;
+}
+
+/* Individual item button ------------------------------------ */
+.circular-menu__item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--circular-menu-item-size);
+  height: var(--circular-menu-item-size);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--circular-menu-item-bg);
+  color: var(--circular-menu-item-color);
+  cursor: pointer;
+  box-shadow: var(--circular-menu-item-shadow);
+  font-size: 0.75rem;
+  transition: transform 150ms ease, filter 150ms ease;
+  transform: translate(-50%, -50%);
+  outline-offset: 3px;
+}
+
+.circular-menu__item:hover {
+  filter: brightness(0.95);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.circular-menu__item:focus-visible {
+  outline: 2px solid var(--circular-menu-trigger-bg);
+}
+
+.circular-menu__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.circular-menu__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.circular-menu__item-label {
+  display: block;
+  font-size: 0.6rem;
+  line-height: 1.2;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
